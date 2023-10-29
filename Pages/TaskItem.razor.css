@@ -1,0 +1,60 @@
+﻿.item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-auto-rows: 35px;
+    background-color: var(--taskListItemColor);
+    border-radius: 7px;
+    margin: 0px;
+    padding: 5px;
+    vertical-align: auto;
+    justify-self: center;
+    margin-block: auto;
+    padding-left: 10px;
+    color: var(--nearWhite);
+    box-shadow: 0px .5px 1px black;
+
+    outline: none;
+    border: none;
+}
+
+    .item:hover {
+        background-color: var(--taskListItemHoverColor);
+    }
+
+.itemName
+{
+    width:100%;
+    height: 100%;
+    padding: 5px;
+    margin: 0px;
+    font-size: 18px;
+    font-weight: 400;
+    background-color: transparent;
+    text-align: left;
+    border: none;
+    outline: none;
+    color: var(--nearWhite);
+    grid-column:1;
+    grid-row:1;
+}
+
+.removeButton {
+    background-color: transparent;
+    height: 100%;
+    width: 38px;
+    text-align: center;
+    vertical-align: central;
+    font-size: 100%;
+    font-weight: 700;
+    border: none;
+    color: transparent;
+    border-radius: 7px 7px 7px 7px;
+}
+
+.item:hover > .removeButton {
+    color: var(--nearWhite);
+}
+
+.removeButton:hover {
+    background-color: var(--taskListRemoveItemColor);
+}

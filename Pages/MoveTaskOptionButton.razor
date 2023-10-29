@@ -1,0 +1,21 @@
+﻿@using TrelloButInBlazor.Data;
+
+<button class="buttonBG" @onclick="@OnClick">
+	<div class="buttonIcon"></div>
+	<p class="buttonText">@targetCard.name</p>
+</button>
+
+@code
+{
+	[Parameter]
+	public CardData currentCard { get; set; }
+	[Parameter]
+	public CardData targetCard{ get; set; }
+	[Parameter]
+	public TaskData data{ get; set; }
+
+	public void OnClick()
+	{
+		Index.mainPage.MoveTask(currentCard, data, targetCard);
+	}
+}

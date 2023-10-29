@@ -1,0 +1,50 @@
+﻿@using TrelloButInBlazor.Data;
+<div class="holder">
+	@if(data.value)
+	{
+		<button class="checkbox" @onclick="@OnCheckbox">
+			<img class="check" src="https://cdn.discordapp.com/attachments/991422848239415396/1119391906154151978/sadfpksaDJL.png" alt="" />
+		</button>
+		<p class="completedChecklistItemName"><strike>@data.name</strike></p>
+	}
+	else
+	{
+		<button class="checkbox" @onclick="@OnCheckbox">
+		</button>
+		<input class="checklistItemName" @oninput="@onInput" value=@data.name />
+	}
+</div>
+
+@code
+{
+	[Parameter]
+	public TaskChecklistItemData data { get; set; }
+
+	public void OnCheckbox()
+	{
+		data.value = !data.value;
+		Index.mainPage.SaveBoard();
+	}
+
+	public void onInput(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+	{
+		string textVal = args.Value as string;
+		if (textVal != null)
+		{
+			data.name = (string)args.Value;
+		}
+		else
+		{
+			data.value = (bool)args.Value;
+		}
+		Index.mainPage.SaveBoard();
+	}
+
+	public void OnPressKey(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			Index.mainPage.SaveBoard();
+		}
+	}
+}

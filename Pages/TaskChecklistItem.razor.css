@@ -1,0 +1,63 @@
+﻿.holder {
+    width: 100%;
+    display: grid;
+    --checkboxSize: 30px;
+    grid-template-columns: var(--checkboxSize) auto;
+    grid-template-rows: var(--checkboxSize);
+    margin-bottom: 5px;
+    gap:5px;
+}
+
+.checkbox {
+    margin: auto;
+    width: 80%;
+    height: 80%;
+    border: none;
+    outline: none;
+    padding: 0px;
+    border-radius: 5px;
+    outline: 2px solid #8c949f;
+    background-color: transparent;
+}
+
+.check {
+    margin: auto;
+    --size: 60%;
+    width: var(--size);
+    height: var(--size);
+    filter: brightness(.8);
+    transform: translateY(-1px);
+}
+
+
+.checklistItemName
+{
+    height: 100%;
+    padding: 5px;
+    padding-inline: 10px;
+    outline: none;
+    border: none;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Noto Sans,Ubuntu,Droid Sans,Helvetica Neue,sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: transparent;
+    color: #bdbdbd;
+}
+
+.completedChecklistItemName
+{
+    height: 100%;
+    padding: 5px;
+    padding-inline: 10px;
+    outline: none;
+    border: none;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Noto Sans,Ubuntu,Droid Sans,Helvetica Neue,sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: transparent;
+    color: #bdbdbd;
+}
+
+

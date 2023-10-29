@@ -1,0 +1,61 @@
+﻿@using TrelloButInBlazor.Data;
+
+<div class="section">
+	<div class="sectionVerticalHolder">
+		<img src="https://cdn.discordapp.com/attachments/682701114587742235/1119377307908460604/png-white-check-mark-in-box-icon-11640258317gfirmnioay.png" alt="" class="sectionIcon" />
+		<div class="sectionHeader">
+			<p class="sectionName">Checklist</p>
+			<div class="progressBar">
+				<div class="progressBarBG">
+					<div class="progressBarFill" style="width:@calculateCompletedPercent()%"></div>
+				</div>
+				<p class="progressBarPercent">@calculateCompletedPercent()%</p>
+			</div>
+			<button class="deleteChecklist" @onclick="() => onRemoveChecklist.InvokeAsync(index)">Delete</button>
+		</div>
+		@{
+			foreach(TaskChecklistItemData checklistItem in referenceChecklist.list)
+			{
+				<TaskChecklistItem data = "@checklistItem"></TaskChecklistItem>
+			}
+		}
+		<button class="addToChecklist" @onclick="@AddToChecklist">Add to checklist...</button>
+	</div>
+</div>
+
+@code
+{
+	[Parameter]
+	public int index{ get; set; }
+	[Parameter]
+	public EventCallback<int> onRemoveChecklist{ get; set; }
+
+	[Parameter]
+	public TaskChecklistData referenceChecklist { get; set; }
+
+	public double calculateCompletedPercent()
+	{
+		int completed = 0;
+		foreach(TaskChecklistItemData data in referenceChecklist.list)
+		{
+			if (data.value)
+				completed++;
+		}
+		double percent = (((double)completed) / ((double)referenceChecklist.list.Count)) * 100d;
+		double roundedPercent = Math.Round(percent);
+		if (completed == 0)
+			roundedPercent = 0d;
+		return roundedPercent;
+	}
+
+	public void AddToChecklist()
+	{
+		referenceChecklist.list.Add(new TaskChecklistItemData(false, "New checklist item"));
+		Index.mainPage.SaveBoard();
+	}
+
+	public void RemoveChecklist()
+	{
+		Index.mainPage.taskViewer.RemoveChecklist(index);
+	}
+}

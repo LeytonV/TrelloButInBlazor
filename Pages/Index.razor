@@ -1,0 +1,131 @@
+﻿@page "/"
+@using System.Text.Json;
+@using System.Net.Http
+@using System.Net.Http.Json;
+@using TrelloButInBlazor.Data;
+
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
+
+<PageTitle>Trello But In Blazor</PageTitle>
+@{
+    board = localStorage.GetItem<List<CardData>>("Board");
+    if(board == null)
+    {
+        board = new List<CardData>() { new CardData("TODO") };
+    }
+    
+    mainPage = this;
+}
+
+<div class="background">
+    @{
+        int index = 0;  
+        foreach (CardData c in board)
+        {
+            <Card referenceCard="@c" ourIndex="@index" />
+            index++;
+        }
+     }
+        <button class="addCard" @onclick="AddCard">
+            <p class="addCardText">+ Add new card</p>
+        </button>
+
+    @if (currentlyViewedTask != null)
+    {
+        <TaskViewWindow currentTask="@currentlyViewedTask" @ref="@taskViewer"/>
+    }
+</div>
+
+@code
+{
+    public List<CardData> board = new List<CardData>();
+    public static Index mainPage;
+
+    public TrelloButInBlazor.Pages.TaskItem currentlyViewedTask;
+    public TaskViewWindow taskViewer;
+
+    public void AddCard()
+    {
+        board.Add(new CardData("New Card"));
+        SaveBoard();
+    }
+
+    public void RemoveTask(CardData card, TaskData task)
+    {
+        card.tasks.Remove(task);
+        SaveBoard();
+    }
+
+    public void RemoveCard(CardData card)
+    {
+        board.Remove(card);
+        SaveBoard();
+    }
+
+    public void AddTask(CardData card)
+    {
+        card.tasks.Add(new TaskData("New Task"));
+        SaveBoard();
+    }
+
+    public void RenameCard(CardData data, string newName)
+    {
+        data.name = newName;
+        SaveBoard();
+    }
+
+    public void RenameTask(TaskData task, string newName)
+    {
+        task.name = newName;
+        SaveBoard();
+    }
+
+    public void ShowTaskDetails(TrelloButInBlazor.Pages.TaskItem data)
+    {
+        currentlyViewedTask = data;
+        StateHasChanged();
+    }
+
+    public void CloseTaskDetails()
+    {
+        currentlyViewedTask = null;
+        Index.mainPage.SaveBoard();
+    }
+
+    public void SaveBoard()
+    {
+        localStorage.SetItem("Board", board);
+        StateHasChanged();
+    }
+
+    public void CopyTask(CardData card, int taskIndex)
+    {
+        TaskData data = new TaskData(card.tasks[taskIndex]);
+        card.tasks.Add(data);
+        SaveBoard();
+    }
+
+    public void MoveTask(CardData ogCard, TaskData task, CardData newCard)
+    {
+        TaskData newTask = new TaskData(task);
+        ogCard.tasks.Remove(task);
+        newCard.tasks.Add(newTask);
+
+        if (taskViewer != null)
+            taskViewer.OnTaskMoved();
+
+        SaveBoard();
+    }
+
+    public void AddChecklistToTask(TaskData data)
+    {
+        data.checklists.Add(new TaskChecklistData("some list", new List<TaskChecklistItemData>()));
+        SaveBoard();
+    }
+
+    public void RemoveChecklistFromTask(TaskData data, int i)
+    {
+        data.checklists.RemoveAt(i);
+        SaveBoard();
+    }
+}

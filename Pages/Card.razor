@@ -1,0 +1,43 @@
+﻿@using TrelloButInBlazor.Data;
+
+<div class="card" >
+	<div class="headerArea">
+		<input type="text" class="cardName" @oninput="@onInput" value="@referenceCard.name">
+		<button class="removeButton" @onclick="RemoveCard">X</button>
+	</div>
+	@{
+		int i = 0;
+		foreach (TaskData s in referenceCard.tasks)
+		{
+			<TaskItem ourCard=@this taskData=@s indexInList=i/>
+			i++;
+		}
+	}
+    <button type="button" id="AddTaskButton" class="addTaskButton" @onclick="AddTask" > + Add Task</button >
+</div >
+
+@code
+{
+	[Parameter]
+	public CardData referenceCard { get; set; }
+	[Parameter]
+	public int ourIndex{ get; set; } //Set in a foreach loop.
+
+	public void RemoveCard()
+	{
+		Index.mainPage.RemoveCard(referenceCard);
+	}
+
+	public void AddTask()
+	{
+		Index.mainPage.AddTask(referenceCard);
+	}
+
+	public void onInput(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+	{
+		if(args.Value != null)
+		{
+			Index.mainPage.RenameCard(referenceCard, (string)args.Value);
+		}
+	}
+}

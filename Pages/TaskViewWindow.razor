@@ -1,0 +1,139 @@
+﻿@using TrelloButInBlazor.Data;
+<div class="taskViewBackgroundDarken">
+	<button class="clickOffButton" @onclick="@ClickOff" />
+	<div class="taskViewBG" @onkeypress="@OnTypeKey">
+		<button class="exitButton" @onclick="@ClickOff">
+			<p class="exitButtonText">X</p>
+		</button>
+		<div class="header">
+			<div class="headerIcon"></div>
+			<input class="taskName" @oninput="@onInputName" value=@currentTask.taskData.name>
+			<p class="subTaskName">in card <b>@currentTask.ourCard.referenceCard.name</b></p>
+		</div>
+		<div class="windowSplit">
+			<div class="sections">
+				<div class="section">
+					<div class="sectionVerticalHolder">
+						<img src="https://cdn.discordapp.com/attachments/682701114587742235/1118544760479678596/paragraph.png" alt="" class="sectionIcon" />
+						<p class="sectionName">Description</p>
+						<textarea class="descriptionBox" spellcheck="false" @oninput="@onInputDescription" placeholder="Click to add a description" value="@currentTask.taskData.description">
+
+					</textarea>
+					</div>
+				</div>
+
+				@{
+					int index = 0;
+					foreach (TaskChecklistData checklist in currentTask.taskData.checklists)
+					{
+						<TaskChecklist index="@index" onRemoveChecklist="@RemoveChecklist" referenceChecklist="@checklist"></TaskChecklist>
+						index++;
+					}
+				}
+			</div>
+
+			<div>
+				<div class="addMenu">
+					<p class="addToTaskText">Add to task...</p>
+					<button class="addToTaskButton" @onclick="@AddChecklist">
+						<img class="addToTaskIcon" src="https://cdn.discordapp.com/attachments/682701114587742235/1119377307908460604/png-white-check-mark-in-box-icon-11640258317gfirmnioay.png" alt="" />
+						<p class="addToTaskButtonText">Checklist</p>
+					</button>
+				</div>
+				<div class="addMenu">
+					<p class="addToTaskText">Actions</p>
+					<button class="addToTaskButton" @onclick="@CopyTask">
+						<img class="addToTaskIcon" src="https://cdn.discordapp.com/attachments/991422848239415396/1119599408019943504/copy.png" alt="" />
+						<p class="addToTaskButtonText">Copy</p>
+					</button>
+					@{
+						if (isMovingTask)
+						{
+							<div class="moveToMenu">
+								<button class="addToTaskButton" @onclick="@OnPressMoveTask">
+									<img class="addToTaskIcon" src="https://www.nicepng.com/png/full/9-97633_right-arrow-white-png-right-arrow-png-white.png" alt="" />
+									<p class="addToTaskButtonText">Move</p>
+								</button>
+								@{
+									int i = 0;
+									foreach (CardData card in Index.mainPage.board)
+									{
+										<MoveTaskOptionButton currentCard="@currentTask.ourCard.referenceCard" targetCard="@card" data="@currentTask.taskData"></MoveTaskOptionButton>
+										i++;
+									}
+								}
+							</div>
+						}
+						else
+						{
+							<button class="addToTaskButton" @onclick="@OnPressMoveTask">
+								<img class="addToTaskIcon" src="https://www.nicepng.com/png/full/9-97633_right-arrow-white-png-right-arrow-png-white.png" alt="" />
+								<p class="addToTaskButtonText">Move</p>
+							</button>
+						}
+					}
+				</div>
+			</div>
+		</div>
+    </div>
+	<button class="clickOffButton" @onclick="@ClickOff"/>
+</div>
+
+@code
+{
+	[Parameter]
+	public TrelloButInBlazor.Pages.TaskItem currentTask { get; set; }
+
+	public bool isMovingTask;
+
+	public void onInputName(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+	{
+		if(args.Value != null)
+		{
+			currentTask.taskData.name = (string)args.Value;
+		}
+	}
+
+	public void onInputDescription(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+	{
+		if(args.Value != null)
+		{
+			currentTask.taskData.description = (string)args.Value;
+		}
+	}
+
+	public void ClickOff()
+	{
+		Index.mainPage.CloseTaskDetails();
+	}
+
+	public void AddChecklist()
+	{
+		Index.mainPage.AddChecklistToTask(currentTask.taskData);
+	}
+
+	public void RemoveChecklist(int i)
+	{
+		Index.mainPage.RemoveChecklistFromTask(currentTask.taskData, i);
+	}
+
+	public void CopyTask()
+	{
+		Index.mainPage.CopyTask(currentTask.ourCard.referenceCard, currentTask.indexInList);
+	}
+
+	public void OnPressMoveTask()
+	{
+		isMovingTask = !isMovingTask;
+	}
+
+	public void OnTypeKey(KeyboardEventArgs e)
+	{
+		Index.mainPage.SaveBoard();
+	}
+
+	public void OnTaskMoved()
+	{
+		isMovingTask = false;
+	}
+}

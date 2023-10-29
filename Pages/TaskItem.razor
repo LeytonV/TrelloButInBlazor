@@ -1,0 +1,59 @@
+﻿@using TrelloButInBlazor.Data;
+
+<button class="item">
+	@{
+		if(isRenaming)
+		{
+			<input type="text" class="itemName" @oninput="@OnEdit" @onkeydown="@OnTypeKey" value="@taskData.name">
+		}
+		else
+		{
+			<p type="text" class="itemName" @onclick="@OnShowDetails" @ondblclick="@OnClickRename">@taskData.name</p>
+		}
+	}
+	<button class="removeButton" @onclick="Remove">X</button>
+</button>
+
+@code
+{
+	[Parameter]
+	public TrelloButInBlazor.Pages.Card ourCard { get; set; }
+	[Parameter]
+	public TaskData taskData { get; set; }
+	[Parameter]
+	public int indexInList { get; set; }
+
+	public bool isRenaming = false;
+
+	public void Remove()
+	{
+		Index.mainPage.RemoveTask(ourCard.referenceCard, taskData);
+	}
+
+	public void OnEdit(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+	{
+		if(args.Value != null)
+		{
+			Index.mainPage.RenameTask(taskData, (string)args.Value);
+		}
+	}
+
+	//When we double click the label
+	public void OnClickRename()
+	{
+		isRenaming = true;
+	}
+
+	public void OnShowDetails()
+	{
+		Index.mainPage.ShowTaskDetails(this);
+	}
+
+	public void OnTypeKey(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			isRenaming = false;
+		}
+	}
+}
